@@ -20,7 +20,9 @@ import { PaymentDone } from "./pages/payment_done";
 import { PaymentProcess } from "./pages/payment_process";
 import { AdminProducts } from "./pages/admin_products";
 import ProductDetailAdmin from "./pages/admin_p_detail";
-
+import { CargoProducts } from "./pages/cargo_product";
+import ProductDetailCargo from "./pages/cargo_p_details";
+import Personal_Info from "./pages/personal_info";
 
 
 function App() {
@@ -45,9 +47,12 @@ function App() {
       <Route path="/order_history" element={<OrderHistory/>} />
       <Route path="/payment_success" element={<PaymentDone/>} />
       <Route path="/admin_products" element={<AdminProducts/>} />
+      <Route path="/cargo_products" element={<CargoProducts/>} />
       <Route path="/payment_process" element={<PaymentProcess/>} />
       <Route path="/products/:productId" element={<ProductDetail/>} />
       <Route path="/admin_products/:productId" element={<ProductDetailAdmin/>} />
+      <Route path="/cargo_products/:productId" element={<ProductDetailCargo/>} />
+      <Route path="/personal_info" element={<Personal_Info/>} />
     </Routes>     
     </Router> 
       

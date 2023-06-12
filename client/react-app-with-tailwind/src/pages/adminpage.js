@@ -157,7 +157,6 @@ const statusChange =  async (prodid, userid) => {
   return await axios.put(`http://localhost:3001/order/in_transit/${prodid}/${userid}`)
   .then((response) => {
     //console.log(response.data);
-    alert("Changed status")
     refreshPage();
   })
   .catch((error) => {
@@ -203,7 +202,6 @@ const Cancel =  async (prodid, userid) => {
 const handleCategory = (event) => {
   const {name, value} = event.target;
   setCategory({ ...cate, [name]: value});
-  refreshPage();
 };
 
 const handleChange = (event) => {
@@ -228,6 +226,17 @@ let totalPrice = 0;
 
 for (let i = 0; i < filteredOrders.length; i++) {
   totalPrice += filteredOrders[i].total;
+}
+
+const statusChangeDeliver =  async (prodid, userid) => {
+  return await axios.put(`http://localhost:3001/order/deliver/${prodid}/${userid}`)
+  .then((response) => {
+    console.log(response.data);
+    refreshPage();
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 }
 
 
@@ -285,11 +294,6 @@ for (let i = 0; i < filteredOrders.length; i++) {
     ))}
   </div>
   
-  <h2 className="mt-8 text-xl font-semibold mb-4">REVENUE GRAPH</h2>
-  
-  
-
-  <OrderGraph filteredOrders={filteredOrders} />
   
   <div className="bg-gray-800 container mx-auto my-10">
     <div className="bg-white shadow rounded-lg p-6">
@@ -335,13 +339,16 @@ for (let i = 0; i < filteredOrders.length; i++) {
                 ))}
               
               </div>
-              <p className="text-xs text-gray-500">{order2.delivery_address}</p>
+              <p className="text-xs text-gray-500">Address: {order2.delivery_address}</p>
+              <p className="text-xs text-gray-500">Total Price: {order2.total} TL</p>
+              <p className="text-xs text-gray-500">User ID:{order2.userID}</p>
+              <p className="text-xs text-gray-500">Quantity: {order2.order.length}</p>
               {order2.status === "Processing" && (
                 <button
                   onClick={() => statusChange(order2._id, order2.userID)}
                   className="bg-dark-blue rounded-md text-white font-semibold px-4 py-2 hover:bg-button-blue focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
                 >
-                  IN-TRANSIT
+                  In-Transit
                 </button>
               )}
               {order2.status === "Waiting For Cancel" && (
@@ -353,16 +360,20 @@ for (let i = 0; i < filteredOrders.length; i++) {
                 </button>
               )}
               {order2.status === "Waiting For Refund" && (
-                <button
-                  onClick={() => Refund(order2._id, order2.userID)}
-                  className="bg-yellow-600 rounded-md text-white font-semibold px-4 py-2 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2"
-                >
-                  {order2.status}
+                <button className="bg-gray-400 rounded-md text-white font-semibold px-4 py-2 cursor-not-allowed" disabled>
+                Completed
                 </button>
               )}
-              {order2.status !== "Processing" && order2.status !== "Waiting For Cancel" && order2.status !== "Waiting For Refund" && (
+              {order2.status === "In-Transit" && (
+                <button 
+                onClick={() => statusChangeDeliver(order2._id, order2.userID)}
+                className="bg-gray-800 rounded-md text-white font-semibold px-4 py-2 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2">
+                  Deliver
+                </button>
+              )}
+              {order2.status !== "Processing" && order2.status !== "In-Transit" && order2.status !== "Waiting For Cancel" && order2.status !== "Waiting For Refund" && (
                 <button className="bg-gray-400 rounded-md text-white font-semibold px-4 py-2 cursor-not-allowed" disabled>
-                  ALREADY PROCESSED
+                  Completed
                 </button>
               )}
             </div>
@@ -476,77 +487,3 @@ export function downloadPDF(order2) {
 
 
 
-
-const OrderGraph = ({ filteredOrders }) => {
-  const chartContainerRef = useRef(null);
-  const chartInstanceRef = useRef(null);
-
-  // Extracting dates and total prices from filteredOrders
-  const dates = filteredOrders.map(order => order.date1);
-  const totalPrices = filteredOrders.map(order => order.total);
-
-  // Calculating cumulative sum of total prices
-  const cumulativeSum = totalPrices.reduce((acc, cur, index) => acc.concat(cur + (acc[index - 1] || 0)), []);
-
-  useEffect(() => {
-    // Create the chart once the component is mounted and DOM elements are available
-    if (chartContainerRef.current && !chartInstanceRef.current && dates.length > 0) {
-      const ctx = chartContainerRef.current.getContext('2d');
-      const newChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: dates,
-          datasets: [
-            {
-              label: 'Total Revenue',
-              data: cumulativeSum,
-              fill: false,
-              borderColor:'rgb(112, 128, 144)',
-              tension: 0.1,
-            },
-          ],
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true,
-              reverse: false,
-              ticks: {
-                stepSize: Math.ceil(Math.max(...cumulativeSum) / 5),
-              },
-            },
-          },
-          plugins: {
-            title: {
-              display: true,
-              text: `Total Revenue: $${cumulativeSum[cumulativeSum.length - 1]}`,
-              position: 'top',
-            },
-          },
-        },
-      });
-
-      chartInstanceRef.current = newChartInstance;
-    }
-  }, [dates, cumulativeSum]);
-
-  useEffect(() => {
-    // Destroy the chart when the component is unmounted
-    return () => {
-      if (chartInstanceRef.current) {
-        chartInstanceRef.current.destroy();
-        chartInstanceRef.current = null;
-      }
-    };
-  }, []);
-
-  return (
-    <div>
-      {dates.length > 0 && (
-        <canvas ref={chartContainerRef} />
-      )}
-    </div>
-  );
-};
-
-export default OrderGraph;

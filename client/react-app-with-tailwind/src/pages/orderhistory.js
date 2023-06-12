@@ -89,12 +89,15 @@ export const OrderHistory = () => {
    /* asdsasa */
 
     const [order, setOrder] = useState([])
-
+    const [date1, setDate1] = useState(null);
   /*const handleRatingChange = (event) => {
     const value = parseInt(event.target.value);
     setRating2(value);
   };*/
 
+
+
+  
 
     useEffect(() => {
 
@@ -104,6 +107,7 @@ export const OrderHistory = () => {
             {
                 const response = await axios.get(`http://localhost:3001/auth/order_history/${userId}`);
                 setOrder(order => [...response.data.ordered]);
+
             }
             catch (err)
             {
@@ -182,6 +186,8 @@ export const OrderHistory = () => {
 }
     //console.log(order)
 
+    const currentDate = new Date();
+
     return (
       <div className="bg-white">
       <div className="py-12 px-10">
@@ -208,9 +214,15 @@ export const OrderHistory = () => {
                   />
                 </svg>
               </button>
+              
               <p className="text-sm text-gray-500">{o.status}</p>
+              <p className="text-sm leading-6 text-gray-900">Address: {o.delivery_address}</p>
+              
               <div>
-                {o.status === "Delivered" ? (
+                {o.status === "Delivered" && ((Math.floor(currentDate.getTime() - new Date(o.date1).getTime()) / (1000 * 3600 * 24)) >= 30) ? (
+                  <button className="bg-white hover:bg-gray-100 text-gray-800 border border-gray-400 font-semibold py-2 px-4 rounded opacity-50 cursor-not-allowed">
+                   Can't refund (+30 days)
+                  </button>) : (o.status === "Delivered" && ((Math.floor(currentDate.getTime() - new Date(o.date1).getTime()) / (1000 * 3600 * 24)) < 30)) ? (
                   <button
                     onClick={() => refund(o._id, o.userID)}
                     className="bg-gray-800 rounded-md text-white font-semibold px-4 py-2 hover:bg-button-blue focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
@@ -231,7 +243,7 @@ export const OrderHistory = () => {
                   </button>
                 ) : o.status === "Canceled" ? (
                   <button className="bg-white hover:bg-gray-100 text-gray-800 border border-gray-400 font-semibold py-2 px-4 rounded opacity-50 cursor-not-allowed">
-                    Already Canceled
+                    Already Cancelled
                   </button>
                 )  : o.status === "Delivered 30+ days ago" ? (
                   null
@@ -288,6 +300,7 @@ export const OrderHistory = () => {
                            </div>
                            <div className="hidden sm:flex sm:flex-col sm:items-end">
                              <p className="text-sm leading-6 text-gray-900">{o_list.price} TL</p>
+                             
                            </div>
 
                            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -425,7 +438,7 @@ export const OrderHistory = () => {
 </div>
     );
 }
-
+//{((Math.floor(currentDate.getTime() - new Date(o.date1).getTime()) / (1000 * 3600 * 24)) >= 30) ? (<p>YES</p>):(<p>NO</p>)}
 export function downloadPDF(address, userid, order2) {
   // Create a new jsPDF instance
   const doc = new jsPDF();

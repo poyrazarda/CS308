@@ -81,14 +81,7 @@ router.post("/discount/prod", async (req, res) => {
           <h1>Hi ${user.username}, </span></h1>
           <p>Product: ${product.product_name} that you added to your wishlist has ${product.discount_rate} discount right now!!!</span></p>
         `,
-        attachments: [
-          {
-            content: attachment,
-            filename: "attachment.pdf",
-            type: "application/pdf",
-            disposition: "attachment"
-          }
-        ]
+        
       };
 
       await sgMail.send(emailData);

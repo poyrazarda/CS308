@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
-import {useNavigate, useParams} from "react-router-dom"
+import {useParams} from "react-router-dom"
 import axios from "axios"
 import { GetUserID } from "../hooks/useGetuserID"
 import { Cart } from "../context/Context"
@@ -47,7 +47,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-function ProductDetailAdmin(props) {
+function ProductDetailCargo(props) {
 
   const userID = GetUserID();
 
@@ -83,7 +83,6 @@ function ProductDetailAdmin(props) {
   };
 
  
-  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -226,7 +225,6 @@ function ProductDetailAdmin(props) {
       const response = await axios.delete(`http://localhost:3001/product/delete/${prodid}`);
       console.log(response.data);
       alert("Deleted");
-      navigate("/adminpanel")
     } catch (error) {
       console.error(error);
     }
@@ -264,14 +262,17 @@ function ProductDetailAdmin(props) {
                   <p className="text-2xl font-light text-gray-900 sm:text-lg text-left">Change Product Details</p>
                 </div>
               </div>
-
-              <form>
+            {product.discount_rate == 0 ? 
+            (
+                <form>
                 <div className="mt-5 space-y-1">
-                <label>To increase, give positive value - to Decrease, give negative value</label>
+              <label htmlFor="username" className="sr-only">
+                Username
+              </label>
               <input
                 type="number"
-                onChange={(event) => handleStock(event)}
-                value={stock}
+                onChange={(event) => handleDiscount(event)}
+                value={discount}
                 className="block w-full px-4 py-2 placeholder-gray-500 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Discount Rate"
               />
@@ -279,9 +280,47 @@ function ProductDetailAdmin(props) {
              <button 
               type = "submit"
               className="mt-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l"
-              onClick={() => changeStock(stock, product._id)}
+              onClick={() => discountProduct(discount, product._id)}
               >
-                Change Stock
+                Apply Discount
+             </button>
+              </div>
+              </form>
+            )
+            :
+            (
+                <div>
+                <button className="bg-white hover:bg-gray-100 text-gray-800 border border-gray-400 font-semibold py-2 px-4 rounded opacity-50 cursor-not-allowed">
+                    Already applied discount ( {product.discount_rate}% )
+                </button>
+                <form>
+                <button 
+                   className="mt-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l"
+                   type="submit"
+                   onClick={() => discountReset(product._id)}
+                   >
+                    Reset Discount
+                </button>
+                </form>
+                </div>
+            )
+            }
+              <form>
+                <div className="mt-5 space-y-1">
+              <input
+                type="number"
+                onChange={(event) => handlePrice(event)}
+                value={price}
+                className="block w-full px-4 py-2 placeholder-gray-500 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="New Price"
+              />
+            
+             <button 
+              type = "submit"
+              className="mt-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l"
+              onClick={() => changePrice(price, product._id)}
+              >
+                Change Price
              </button>
               </div>
               </form>
@@ -358,4 +397,4 @@ function ProductDetailAdmin(props) {
 
 
 
-export default ProductDetailAdmin
+export default ProductDetailCargo

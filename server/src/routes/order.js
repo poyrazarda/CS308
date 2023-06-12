@@ -237,6 +237,7 @@ router.put("/refund/:order_id/:userid", async(req, res) => {
         product.stock++;
         product.save();
       }
+      response.total = 0;
       await response.save();
 
       for (let i = 0; i < user.ordered.length; i++) {
@@ -254,8 +255,32 @@ router.put("/refund/:order_id/:userid", async(req, res) => {
          }
      }
 
+
      await user.save();
      console.log("Order refunded successfully");
+
+     try {
+      
+      {
+      const emailData = {
+        from: process.env.EMAIL_FROM,
+        to: user.email,
+        subject: "Refund",
+        html: `
+          <h1>Hi ${user.username}, </span></h1>
+          <p>Order (${response._id}) Refunded.</span></p>
+        `,
+      };
+
+      await sgMail.send(emailData);
+      console.log("Email sent successfully");
+      //console.log(response);
+      }
+
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Failed to send email" });
+    }
 
      res.json(response);
   }
@@ -297,6 +322,8 @@ router.put("/in_transit/:order_id/:userid", async(req, res) => {
      await user.save();
      console.log("User saved successfully");
 
+     
+
      res.json(response);
   }
   catch (err)
@@ -313,7 +340,7 @@ router.put("/deliver/:order_id/:userid", async(req, res) => {
   {
       console.log(order_id);
       console.log(userid);
-      const response = await OrderModel.findById({_id: order_id});      
+      const response = await OrderModel.findById({_id: order_id});  
       const user = await UserModel.findById({_id: userid});
       response.status = "Delivered";
       await response.save();
@@ -337,6 +364,29 @@ router.put("/deliver/:order_id/:userid", async(req, res) => {
 
      await user.save();
      console.log("User saved successfully");
+
+     try {
+      
+      {
+      const emailData = {
+        from: process.env.EMAIL_FROM,
+        to: user.email,
+        subject: "Delivered",
+        html: `
+          <h1>Hi ${user.username}, </span></h1>
+          <p>Order (${response._id}) status: Delivered.</span></p>
+        `,
+      };
+
+      await sgMail.send(emailData);
+      console.log("Email sent successfully");
+      //console.log(response);
+      }
+
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Failed to send email" });
+    }
 
      res.json(response);
   }

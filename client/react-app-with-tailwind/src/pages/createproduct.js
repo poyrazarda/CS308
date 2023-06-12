@@ -60,6 +60,10 @@ const Createp = () => {
          setProduct({ ...product, [name]: value});
     };
 
+    const refreshPage = () => {
+      window.location.reload(true);
+    }
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -67,7 +71,7 @@ const Createp = () => {
         {
              await axios.post("http://localhost:3001/product/save", product);
              alert("Product added!");
-             navigate("/products");
+             refreshPage();
         }
         catch (error)
         {

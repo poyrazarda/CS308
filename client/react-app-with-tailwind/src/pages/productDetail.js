@@ -159,7 +159,7 @@ function ProductDetail(props) {
             </div>
           </div>
           {/* Product details */}
-          <div className="md:p-12 flex flex-col items-center">
+          <div className="md:p-12 flex flex-col my-16 items-center">
             <div className="w-full">
               <h1 className="text-gray-700 font-bold text-2xl">{product.product_name}</h1>
               <p className="text-gray-700 mt-2">{product.category}</p>

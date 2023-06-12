@@ -29,7 +29,7 @@ function classNames(...classes) {
 }
 
 
-export const AdminProducts = () => {  
+export const CargoProducts = () => {  
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [category, setCategory] = useState(null);
   const [products, setProducts] = useState([]);
@@ -168,7 +168,7 @@ export const AdminProducts = () => {
              <div className="mt-4 flex justify-between">
                <div>
                  <h3 className="text-left font-medium text-gray-700">
-                   <Link to={`/admin_products/${product.product_id}`}>{product.product_name}
+                   <Link to={`/cargo_products/${product.product_id}`}>{product.product_name}
                    <a>
                    <span aria-hidden="true" className="absolute inset-0" />
                      

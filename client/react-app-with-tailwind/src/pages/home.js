@@ -20,10 +20,13 @@ const getFilteredItems = (query, items) => {
   );
 };
 
+
+
 export const Home = () => {
   const [query, setQuery] = useState("");
 
   const { state } = useContext(Cart);
+
 
   const {
     productState: { sort, searchQuery, clear_filters, cate, sort_rating},

@@ -68,22 +68,17 @@ router.post("/paymentinfo", async (req, res) => {
    res.json({message: "User infos saved!"});
 });
 
-router.get("get_user/:userid", async (req, res) => { 
-  const {userid} = req.params;
-  console.log(iamhere)
-  try 
-  {
-       console.log(product_id);
-       const response = await UserModel.findOne({_id: userid })
-       console.log(response)
-       if(!response){
-        res.sendStatus(404);
-               }
-       res.json(response);        
-  }
-  catch (err) 
-  {
-       res.json(err);
+router.get("/get_user/:userid", async (req, res) => {
+  const { userid } = req.params;
+  try {
+    const user = await UserModel.findOne({ _id: mongoose.Types.ObjectId(userid) });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json(user);
+  } catch (err) {
+    console.error("Error fetching user data:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 

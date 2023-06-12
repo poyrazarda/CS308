@@ -162,28 +162,28 @@ export const Navbar = () => {
                           </a>
                         )}
                       </Menu.Item>
-                       {user2 == "admin" ? 
+                       {user2 == "product_manager" ? 
                        (<Menu.Item>
                         {({ active }) => (
                           <a
                             href="/adminpanel"
                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                           >
-                            Admin Panel
+                            Product Manager Panel
                           </a>
                         )}
                        </Menu.Item>) 
                        :
                        console.log("asd")
                        }
-                       {user2 == "cargo" ? 
+                       {user2 == "sales_manager" ? 
                        (<Menu.Item>
                         {({ active }) => (
                           <a
                             href="/cargopanel"
                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                           >
-                            Cargo Panel
+                            Sales Manager Panel
                           </a>
                         )}
                        </Menu.Item>) 
@@ -191,7 +191,7 @@ export const Navbar = () => {
                        console.log("asd")
                        }
 
-                      {user2 == "admin" ? 
+                      {user2 == "product_manager" ? 
                       (
                         <Menu.Item>
                         {({ active }) => (
